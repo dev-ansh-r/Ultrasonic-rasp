@@ -1,22 +1,21 @@
 import time
 import RPi.GPIO as GPIO
-import sys
-import urllib2
+import urllib
+import urllib.request
+import json
+import requests
 
-#from LED_display import display_number
+API = "https://api.thingspeak.com/update?api_key=YOUR_API_KEY"
+
+#TO get the distance from the sensor
+
 def getSensorData():
     GPIO.setmode(GPIO.BOARD)
-
     trig = 38  # sends the signal
     echo = 40  # listens for the signal
-
     GPIO.setwarnings(False)
     GPIO.setup(echo, GPIO.IN)
     GPIO.setup(trig, GPIO.OUT)
-
-
-
-        
 
     GPIO.output(trig, True)
     time.sleep(0.00001)
@@ -33,26 +32,24 @@ def getSensorData():
     distance = ((end - start) * 34300) / 2
 
     return (int (distance))
-def distance():
-    if len(sys.argv) < 2:
-        print('Usage: python tstest.py PRIVATE_KEY')
-        exit(0)
-    print ('starting...')
-    
-    baseURL = 'https://api.thingspeak.com/update?api_key=U6QMYOXVOZUYY2Q2' % sys.argv[1]
-       
-    while True:
-        try:
 
-            distance = getSensorData()
-            f = urllib2.urlopen(baseURL + "&field1=distance" % int(distance/5))
-            print (f.read())
-            f.close()
-            sleep(15)
-        except:
-            print ('exiting.')
-            break
+
+def cloudData():
+    print ('starting...')       
+    while True:
+        distance = cloudData()
+        Header = "&field1={}".format(distance)
+        newurl=API+Header
+        print (newurl)
+        data = urllib.request.urlopen(newurl)
+        print (data)
+        time.sleep(1)
+        f.close()
 
             
 # call main
-distance()
+if __name__ == '__main__':
+    cloudData()
+    GPIO.cleanup()
+    print ('exiting.')
+    exit()
